@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # PostgreSQL with pgvector extension
+  postgres:
+    image: pgvector/pgvector:pg15
+    environment:
+      POSTGRES_DB: vector_rules
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Vector Rules Service
+  vector-rules-service:
+    build: .
+    ports:
+      - "8080:8080"  # HTTP API
+      - "9090:9090"  # gRPC API
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: vector_rules
+      DB_SSLMODE: disable
+      HTTP_PORT: 8080
+      GRPC_PORT: 9090
+      SERVER_HOST: 0.0.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

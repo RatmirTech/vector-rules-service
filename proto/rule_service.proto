@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package rule.v1;
+
+option go_package = "github.com/ratmirtech/vector-rules-service/proto/rule/v1;rulev1";
+
+import "google/protobuf/struct.proto";
+
+// RuleRetrievalService provides vector similarity search functionality
+service RuleRetrievalService {
+  rpc Retrieve(RetrieveRequest) returns (RetrieveResponse);
+}
+
+message RetrieveRequest {
+  // Number of rules to return
+  int32 n = 1;
+  
+  // Optional rule type filter
+  optional string type = 2;
+  
+  // Array of query strings for embedding generation
+  repeated string queries = 3;
+}
+
+message RetrieveResponse {
+  repeated RuleMatch rules = 1;
+}
+
+message RuleMatch {
+  // Rule ID
+  int64 id = 1;
+  
+  // Rule type name
+  string type = 2;
+  
+  // Rule content as JSON
+  google.protobuf.Struct content = 3;
+  
+  // Similarity score (0.0 to 1.0)
+  double score = 4;
+  
+  // Timestamps
+  string created_at = 5;
+  string updated_at = 6;
+}
