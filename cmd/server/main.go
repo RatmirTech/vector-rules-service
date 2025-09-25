@@ -1,3 +1,22 @@
+// @title Vector Rules Service API
+// @version 1.0
+// @description Микросервис для работы с векторной базой данных правил на PostgreSQL + pgvector
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://github.com/ratmirtech/vector-rules-service
+// @contact.email support@example.com
+
+// @license.name MIT
+// @license.url https://opensource.org/licenses/MIT
+
+// @host localhost:8080
+// @BasePath /api/v1
+
+// @schemes http https
+// @produce json
+// @consumes json
+
 package main
 
 import (
@@ -11,12 +30,12 @@ import (
 
 	"google.golang.org/grpc"
 
+	_ "github.com/ratmirtech/vector-rules-service/docs" // Import generated docs
 	"github.com/ratmirtech/vector-rules-service/internal/config"
 	"github.com/ratmirtech/vector-rules-service/internal/infra/db"
 	"github.com/ratmirtech/vector-rules-service/internal/infra/embeddings"
 	"github.com/ratmirtech/vector-rules-service/internal/repository"
 	grpcTransport "github.com/ratmirtech/vector-rules-service/internal/transport/grpc"
-	"github.com/ratmirtech/vector-rules-service/internal/transport/grpc/pb"
 	httpTransport "github.com/ratmirtech/vector-rules-service/internal/transport/http"
 	"github.com/ratmirtech/vector-rules-service/internal/usecase"
 )
@@ -63,6 +82,7 @@ func main() {
 	// Start HTTP server in goroutine
 	go func() {
 		log.Printf("Starting HTTP server on %s", cfg.Server.GetHTTPAddr())
+		log.Printf("Swagger UI available at: http://%s/swagger/index.html", cfg.Server.GetHTTPAddr())
 		if err := httpServer.Start(cfg.Server.GetHTTPAddr()); err != nil {
 			log.Fatal("Failed to start HTTP server:", err)
 		}

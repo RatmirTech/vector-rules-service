@@ -20,7 +20,17 @@ func NewRuleHandler(ruleService domain.RuleService) *RuleHandler {
 	}
 }
 
-// CreateRule handles POST /rules
+// CreateRule creates a new rule
+// @Summary Create a new rule
+// @Description Create a new rule with embedding generation
+// @Tags rules
+// @Accept json
+// @Produce json
+// @Param rule body SwaggerCreateRuleRequest true "Rule creation request"
+// @Success 201 {object} SwaggerRule
+// @Failure 400 {object} SwaggerErrorResponse
+// @Failure 500 {object} SwaggerErrorResponse
+// @Router /rules [post]
 func (h *RuleHandler) CreateRule(c echo.Context) error {
 	var req domain.CreateRuleRequest
 	if err := c.Bind(&req); err != nil {
@@ -35,7 +45,17 @@ func (h *RuleHandler) CreateRule(c echo.Context) error {
 	return c.JSON(http.StatusCreated, rule)
 }
 
-// GetRule handles GET /rules/:id
+// GetRule retrieves a rule by ID
+// @Summary Get rule by ID
+// @Description Get a specific rule by its ID
+// @Tags rules
+// @Produce json
+// @Param id path int true "Rule ID"
+// @Success 200 {object} SwaggerRule
+// @Failure 400 {object} SwaggerErrorResponse
+// @Failure 404 {object} SwaggerErrorResponse
+// @Failure 500 {object} SwaggerErrorResponse
+// @Router /rules/{id} [get]
 func (h *RuleHandler) GetRule(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -54,7 +74,19 @@ func (h *RuleHandler) GetRule(c echo.Context) error {
 	return c.JSON(http.StatusOK, rule)
 }
 
-// UpdateRule handles PUT /rules/:id
+// UpdateRule updates an existing rule
+// @Summary Update a rule
+// @Description Update an existing rule and regenerate embedding
+// @Tags rules
+// @Accept json
+// @Produce json
+// @Param id path int true "Rule ID"
+// @Param rule body SwaggerUpdateRuleRequest true "Rule update request"
+// @Success 200 {object} SwaggerRule
+// @Failure 400 {object} SwaggerErrorResponse
+// @Failure 404 {object} SwaggerErrorResponse
+// @Failure 500 {object} SwaggerErrorResponse
+// @Router /rules/{id} [put]
 func (h *RuleHandler) UpdateRule(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -79,7 +111,16 @@ func (h *RuleHandler) UpdateRule(c echo.Context) error {
 	return c.JSON(http.StatusOK, rule)
 }
 
-// DeleteRule handles DELETE /rules/:id
+// DeleteRule deletes a rule
+// @Summary Delete a rule
+// @Description Delete a rule by ID
+// @Tags rules
+// @Param id path int true "Rule ID"
+// @Success 204 "No content"
+// @Failure 400 {object} SwaggerErrorResponse
+// @Failure 404 {object} SwaggerErrorResponse
+// @Failure 500 {object} SwaggerErrorResponse
+// @Router /rules/{id} [delete]
 func (h *RuleHandler) DeleteRule(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -98,7 +139,17 @@ func (h *RuleHandler) DeleteRule(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
-// ListRules handles GET /rules
+// ListRules lists rules with pagination
+// @Summary List rules
+// @Description List rules with optional pagination
+// @Tags rules
+// @Produce json
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Items per page" default(10)
+// @Success 200 {object} SwaggerListResponse
+// @Failure 400 {object} SwaggerErrorResponse
+// @Failure 500 {object} SwaggerErrorResponse
+// @Router /rules [get]
 func (h *RuleHandler) ListRules(c echo.Context) error {
 	// Parse query parameters
 	ruleType := c.QueryParam("type")

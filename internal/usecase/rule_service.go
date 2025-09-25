@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/ratmirtech/vector-rules-service/internal/domain"

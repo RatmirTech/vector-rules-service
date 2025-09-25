@@ -1,4 +1,15 @@
-.PHONY: proto build run test docker-build docker-up docker-down clean
+.PHONY: proto swagger build run test docker-build docker-up docker-down clean
+
+# Go dependencies
+deps:
+	@echo "Installing dependencies..."
+	@go mod tidy
+	@go mod download
+
+# Swagger generation
+swagger:
+	@echo "Generating Swagger documentation..."
+	@swag init -g cmd/server/main.go -o docs/
 
 # Proto generation
 proto:
@@ -13,12 +24,12 @@ proto:
 		proto/*.proto
 
 # Build application
-build:
+build: swagger
 	@echo "Building application..."
 	@go build -o bin/vector-rules-service cmd/server/main.go
 
 # Run application
-run:
+run: deps swagger
 	@echo "Running application..."
 	@go run cmd/server/main.go
 
@@ -53,25 +64,40 @@ clean:
 	@echo "Cleaning..."
 	@rm -rf bin/
 	@rm -rf internal/transport/grpc/pb/
+	@rm -rf docs/docs.go docs/swagger.json docs/swagger.yaml
+
+# Install development tools
+install-tools:
+	@echo "Installing development tools..."
+	@go install github.com/swaggo/swag/cmd/swag@latest
+	@go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 # Setup development environment
-setup: proto
+setup: install-tools deps proto swagger
 	@echo "Setting up development environment..."
-	@go mod tidy
-	@go mod download
+
+# Development with auto-reload
+dev: deps swagger
+	@echo "Starting development mode..."
+	@go run cmd/server/main.go
 
 # Help
 help:
 	@echo "Available commands:"
+	@echo "  deps        - Install Go dependencies"
+	@echo "  swagger     - Generate Swagger documentation"
 	@echo "  proto       - Generate protobuf code"
 	@echo "  build       - Build application"
 	@echo "  run         - Run application"
+	@echo "  dev         - Run in development mode"
 	@echo "  test        - Run tests"
 	@echo "  docker-build- Build Docker image"
 	@echo "  docker-up   - Start containers"
 	@echo "  docker-down - Stop containers"
 	@echo "  db-up       - Start database only"
 	@echo "  migrate     - Run database migrations"
+	@echo "  install-tools- Install development tools"
 	@echo "  clean       - Clean build artifacts"
 	@echo "  setup       - Setup development environment"
 	@echo "  help        - Show this help"

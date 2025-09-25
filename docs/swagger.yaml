@@ -1,0 +1,440 @@
+basePath: /api/v1
+definitions:
+  http.SwaggerCreateRuleRequest:
+    properties:
+      content:
+        example: '{"description":"Sample rule content"}'
+        type: string
+      type:
+        example: security
+        type: string
+    required:
+    - content
+    - type
+    type: object
+  http.SwaggerCreateRuleTypeRequest:
+    properties:
+      name:
+        example: security
+        type: string
+    required:
+    - name
+    type: object
+  http.SwaggerErrorResponse:
+    properties:
+      error:
+        example: Invalid request data
+        type: string
+    type: object
+  http.SwaggerListResponse:
+    properties:
+      items:
+        items: {}
+        type: array
+      limit:
+        example: 10
+        type: integer
+      page:
+        example: 1
+        type: integer
+      total:
+        example: 100
+        type: integer
+    type: object
+  http.SwaggerRule:
+    properties:
+      content:
+        example: '{"description":"Sample rule content"}'
+        type: string
+      created_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+      id:
+        example: 1
+        type: integer
+      rule_type_id:
+        example: 1
+        type: integer
+      rule_type_name:
+        example: security
+        type: string
+      updated_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+    type: object
+  http.SwaggerRuleType:
+    properties:
+      created_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: security
+        type: string
+      updated_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+    type: object
+  http.SwaggerUpdateRuleRequest:
+    properties:
+      content:
+        example: '{"description":"Updated rule content"}'
+        type: string
+      id:
+        example: 1
+        type: integer
+      type:
+        example: security
+        type: string
+    required:
+    - content
+    - id
+    - type
+    type: object
+  http.SwaggerUpdateRuleTypeRequest:
+    properties:
+      id:
+        example: 1
+        type: integer
+      name:
+        example: updated-security
+        type: string
+    required:
+    - id
+    - name
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@example.com
+    name: API Support
+    url: http://github.com/ratmirtech/vector-rules-service
+  description: Микросервис для работы с векторной базой данных правил на PostgreSQL
+    + pgvector
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: Vector Rules Service API
+  version: "1.0"
+paths:
+  /rule-types:
+    get:
+      description: List rule types with optional pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SwaggerListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+      summary: List rule types
+      tags:
+      - rule-types
+    post:
+      consumes:
+      - application/json
+      description: Create a new rule type
+      parameters:
+      - description: Rule type creation request
+        in: body
+        name: ruleType
+        required: true
+        schema:
+          $ref: '#/definitions/http.SwaggerCreateRuleTypeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.SwaggerRuleType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+      summary: Create a new rule type
+      tags:
+      - rule-types
+  /rule-types/{id}:
+    delete:
+      description: Delete a rule type by ID
+      parameters:
+      - description: Rule type ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+      summary: Delete a rule type
+      tags:
+      - rule-types
+    get:
+      description: Get a specific rule type by its ID
+      parameters:
+      - description: Rule type ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SwaggerRuleType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+      summary: Get rule type by ID
+      tags:
+      - rule-types
+    put:
+      consumes:
+      - application/json
+      description: Update an existing rule type
+      parameters:
+      - description: Rule type ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Rule type update request
+        in: body
+        name: ruleType
+        required: true
+        schema:
+          $ref: '#/definitions/http.SwaggerUpdateRuleTypeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SwaggerRuleType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+      summary: Update a rule type
+      tags:
+      - rule-types
+  /rules:
+    get:
+      description: List rules with optional pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SwaggerListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+      summary: List rules
+      tags:
+      - rules
+    post:
+      consumes:
+      - application/json
+      description: Create a new rule with embedding generation
+      parameters:
+      - description: Rule creation request
+        in: body
+        name: rule
+        required: true
+        schema:
+          $ref: '#/definitions/http.SwaggerCreateRuleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.SwaggerRule'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+      summary: Create a new rule
+      tags:
+      - rules
+  /rules/{id}:
+    delete:
+      description: Delete a rule by ID
+      parameters:
+      - description: Rule ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+      summary: Delete a rule
+      tags:
+      - rules
+    get:
+      description: Get a specific rule by its ID
+      parameters:
+      - description: Rule ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SwaggerRule'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+      summary: Get rule by ID
+      tags:
+      - rules
+    put:
+      consumes:
+      - application/json
+      description: Update an existing rule and regenerate embedding
+      parameters:
+      - description: Rule ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Rule update request
+        in: body
+        name: rule
+        required: true
+        schema:
+          $ref: '#/definitions/http.SwaggerUpdateRuleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SwaggerRule'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.SwaggerErrorResponse'
+      summary: Update a rule
+      tags:
+      - rules
+produces:
+- application/json
+schemes:
+- http
+- https
+swagger: "2.0"

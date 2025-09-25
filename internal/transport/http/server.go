@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/ratmirtech/vector-rules-service/internal/domain"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 // Server represents the HTTP server
@@ -45,6 +46,9 @@ func (s *Server) setupRoutes() {
 	s.echo.GET("/health", func(c echo.Context) error {
 		return c.JSON(200, map[string]string{"status": "ok"})
 	})
+
+	// Swagger documentation
+	s.echo.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// API v1 routes
 	v1 := s.echo.Group("/api/v1")

@@ -20,7 +20,17 @@ func NewRuleTypeHandler(ruleTypeService domain.RuleTypeService) *RuleTypeHandler
 	}
 }
 
-// CreateRuleType handles POST /rule-types
+// CreateRuleType creates a new rule type
+// @Summary Create a new rule type
+// @Description Create a new rule type
+// @Tags rule-types
+// @Accept json
+// @Produce json
+// @Param ruleType body SwaggerCreateRuleTypeRequest true "Rule type creation request"
+// @Success 201 {object} SwaggerRuleType
+// @Failure 400 {object} SwaggerErrorResponse
+// @Failure 500 {object} SwaggerErrorResponse
+// @Router /rule-types [post]
 func (h *RuleTypeHandler) CreateRuleType(c echo.Context) error {
 	var req domain.CreateRuleTypeRequest
 	if err := c.Bind(&req); err != nil {
@@ -35,7 +45,17 @@ func (h *RuleTypeHandler) CreateRuleType(c echo.Context) error {
 	return c.JSON(http.StatusCreated, ruleType)
 }
 
-// GetRuleType handles GET /rule-types/:id
+// GetRuleType retrieves a rule type by ID
+// @Summary Get rule type by ID
+// @Description Get a specific rule type by its ID
+// @Tags rule-types
+// @Produce json
+// @Param id path int true "Rule type ID"
+// @Success 200 {object} SwaggerRuleType
+// @Failure 400 {object} SwaggerErrorResponse
+// @Failure 404 {object} SwaggerErrorResponse
+// @Failure 500 {object} SwaggerErrorResponse
+// @Router /rule-types/{id} [get]
 func (h *RuleTypeHandler) GetRuleType(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -54,7 +74,19 @@ func (h *RuleTypeHandler) GetRuleType(c echo.Context) error {
 	return c.JSON(http.StatusOK, ruleType)
 }
 
-// UpdateRuleType handles PUT /rule-types/:id
+// UpdateRuleType updates an existing rule type
+// @Summary Update a rule type
+// @Description Update an existing rule type
+// @Tags rule-types
+// @Accept json
+// @Produce json
+// @Param id path int true "Rule type ID"
+// @Param ruleType body SwaggerUpdateRuleTypeRequest true "Rule type update request"
+// @Success 200 {object} SwaggerRuleType
+// @Failure 400 {object} SwaggerErrorResponse
+// @Failure 404 {object} SwaggerErrorResponse
+// @Failure 500 {object} SwaggerErrorResponse
+// @Router /rule-types/{id} [put]
 func (h *RuleTypeHandler) UpdateRuleType(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -79,7 +111,16 @@ func (h *RuleTypeHandler) UpdateRuleType(c echo.Context) error {
 	return c.JSON(http.StatusOK, ruleType)
 }
 
-// DeleteRuleType handles DELETE /rule-types/:id
+// DeleteRuleType deletes a rule type
+// @Summary Delete a rule type
+// @Description Delete a rule type by ID
+// @Tags rule-types
+// @Param id path int true "Rule type ID"
+// @Success 204 "No content"
+// @Failure 400 {object} SwaggerErrorResponse
+// @Failure 404 {object} SwaggerErrorResponse
+// @Failure 500 {object} SwaggerErrorResponse
+// @Router /rule-types/{id} [delete]
 func (h *RuleTypeHandler) DeleteRuleType(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -98,7 +139,17 @@ func (h *RuleTypeHandler) DeleteRuleType(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
-// ListRuleTypes handles GET /rule-types
+// ListRuleTypes lists rule types with pagination
+// @Summary List rule types
+// @Description List rule types with optional pagination
+// @Tags rule-types
+// @Produce json
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Items per page" default(10)
+// @Success 200 {object} SwaggerListResponse
+// @Failure 400 {object} SwaggerErrorResponse
+// @Failure 500 {object} SwaggerErrorResponse
+// @Router /rule-types [get]
 func (h *RuleTypeHandler) ListRuleTypes(c echo.Context) error {
 	// Parse query parameters
 	limitStr := c.QueryParam("limit")
